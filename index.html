@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donation Finder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-title {
+            font-size: 1.5em;
+            font-weight: 800;
+            color: #c0392b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #c0392b;
+            box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stat-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: #c0392b;
+        }
+
+        .add-donor-section {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(192, 57, 43, 0.2);
+        }
+
+        .add-donor-section h2 {
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        input, select, textarea {
+            padding: 12px 14px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-family: inherit;
+            background: rgba(255,255,255,0.95);
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: white;
+            background: white;
+        }
+
+        .btn-add {
+            background: white;
+            color: #c0392b;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .donors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .donor-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .donor-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .blood-type-header {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .blood-type {
+            font-size: 2.5em;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .urgency-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .urgency-critical {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .urgency-normal {
+            background: #3498db;
+            color: white;
+        }
+
+        .donor-content {
+            padding: 20px;
+        }
+
+        .donor-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        .donor-info {
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .donor-info-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .donor-info-icon {
+            color: #c0392b;
+            font-weight: 700;
+            min-width: 20px;
+        }
+
+        .donor-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .btn-contact {
+            flex: 1;
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .btn-contact:hover {
+            background: #2980b9;
+        }
+
+        .btn-remove {
+            background: #e74c3c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .btn-remove:hover {
+            background: #c0392b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search-bar {
+                max-width: none;
+            }
+
+            .donors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="nav-title">
+            🩸 Blood Donation Finder
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchDonor" placeholder="Search by name..." onkeyup="filterDonors()">
+        </div>
+        <div class="stats">
+            <span class="stat-badge">Total: <span id="totalDonors">0</span></span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label>Blood Type</label>
+                <select id="bloodTypeFilter" onchange="filterDonors()">
+                    <option value="">All Types</option>
+                    <option value="O+">O+ (Universal Donor)</option>
+                    <option value="O-">O- (Universal Donor)</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>City</label>
+                <select id="cityFilter" onchange="filterDonors()">
+                    <option value="">All Cities</option>
+                    <option value="Lahore">Lahore</option>
+                    <option value="Karachi">Karachi</option>
+                    <option value="Islamabad">Islamabad</option>
+                    <option value="Rawalpindi">Rawalpindi</option>
+                    <option value="Faisalabad">Faisalabad</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Urgency</label>
+                <select id="urgencyFilter" onchange="filterDonors()">
+                    <option value="">All</option>
+                    <option value="Critical">Critical</option>
+                    <option value="Normal">Normal</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Add Donor Form -->
+        <div class="add-donor-section">
+            <h2>➕ Register as Donor</h2>
+            <div class="form-grid">
+                <input type="text" id="donorName" placeholder="Full Name" required>
+                <select id="donorBlood" required>
+                    <option value="">Blood Type</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+                <input type="tel" id="donorPhone" placeholder="Phone Number" required>
+                <select id="donorCity" required>
+                    <option value="">City</option>
+                    <option value="Lahore">Lahore</option>
+                    <option value="Karachi">Karachi</option>
+                    <option value="Islamabad">Islamabad</option>
+                    <option value="Rawalpindi">Rawalpindi</option>
+                    <option value="Faisalabad">Faisalabad</option>
+                    <option value="Other">Other</option>
+                </select>
+                <select id="donorUrgency" required>
+                    <option value="Normal">Normal</option>
+                    <option value="Critical">Critical - Need ASAP!</option>
+                </select>
+            </div>
+            <button class="btn-add" onclick="addDonor()">Register Donor</button>
+        </div>
+
+        <!-- Donors Grid -->
+        <div class="donors-grid" id="donorsGrid">
+            <div class="empty-state">
+                <div class="empty-state-icon">🩸</div>
+                <p>No donors yet. Be the first to register!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let donors = JSON.parse(localStorage.getItem('donors')) || [];
+
+        function addDonor() {
+            const name = document.getElementById('donorName').value.trim();
+            const blood = document.getElementById('donorBlood').value;
+            const phone = document.getElementById('donorPhone').value.trim();
+            const city = document.getElementById('donorCity').value;
+            const urgency = document.getElementById('donorUrgency').value;
+
+            if (!name || !blood || !phone || !city) {
+                alert('Please fill all fields!');
+                return;
+            }
+
+            donors.push({
+                id: Date.now(),
+                name,
+                blood,
+                phone,
+                city,
+                urgency,
+                date: new Date().toLocaleDateString()
+            });
+
+            saveDonors();
+            clearForm();
+            renderDonors();
+        }
+
+        function deleteDonor(id) {
+            if (confirm('Remove this donor?')) {
+                donors = donors.filter(d => d.id !== id);
+                saveDonors();
+                renderDonors();
+            }
+        }
+
+        function saveDonors() {
+            localStorage.setItem('donors', JSON.stringify(donors));
+        }
+
+        function clearForm() {
+            document.getElementById('donorName').value = '';
+            document.getElementById('donorBlood').value = '';
+            document.getElementById('donorPhone').value = '';
+            document.getElementById('donorCity').value = '';
+            document.getElementById('donorUrgency').value = 'Normal';
+        }
+
+        function filterDonors() {
+            const searchTerm = document.getElementById('searchDonor').value.toLowerCase();
+            const bloodFilter = document.getElementById('bloodTypeFilter').value;
+            const cityFilter = document.getElementById('cityFilter').value;
+            const urgencyFilter = document.getElementById('urgencyFilter').value;
+
+            const filtered = donors.filter(d => {
+                const matchSearch = d.name.toLowerCase().includes(searchTerm);
+                const matchBlood = !bloodFilter || d.blood === bloodFilter;
+                const matchCity = !cityFilter || d.city === cityFilter;
+                const matchUrgency = !urgencyFilter || d.urgency === urgencyFilter;
+
+                return matchSearch && matchBlood && matchCity && matchUrgency;
+            });
+
+            renderDonors(filtered);
+        }
+
+        function renderDonors(donorsToShow = donors) {
+            const grid = document.getElementById('donorsGrid');
+            document.getElementById('totalDonors').textContent = donors.length;
+
+            if (donorsToShow.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🩸</div>
+                        <p>${donors.length === 0 ? 'No donors yet. Be the first to register!' : 'No donors match your filters.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = donorsToShow.map(d => `
+                <div class="donor-card">
+                    <div class="blood-type-header">
+                        <div class="blood-type">${d.blood}</div>
+                        <div class="urgency-badge urgency-${d.urgency.toLowerCase()}">
+                            ${d.urgency === 'Critical' ? '⚠️ CRITICAL' : '✅ Normal'}
+                        </div>
+                    </div>
+                    <div class="donor-content">
+                        <div class="donor-name">${d.name}</div>
+                        <div class="donor-info">
+                            <div class="donor-info-row">
+                                <span class="donor-info-icon">📍</span>
+                                <span>${d.city}</span>
+                            </div>
+                            <div class="donor-info-row">
+                                <span class="donor-info-icon">📅</span>
+                                <span>Registered: ${d.date}</span>
+                            </div>
+                        </div>
+                        <div class="donor-actions">
+                            <button class="btn-contact" onclick="contactDonor('${d.phone}', '${d.name}')">
+                                📞 Contact
+                            </button>
+                            <button class="btn-remove" onclick="deleteDonor(${d.id})">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function contactDonor(phone, name) {
+            alert(`📞 Contact ${name}: ${phone}\n\nPlease call or message to arrange donation.`);
+        }
+
+        renderDonors();
+    </script>
+</body>
+</html>
