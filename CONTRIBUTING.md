@@ -33,7 +33,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating one:
 
 1. **Fork the Repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/blood-donation-finder.git
+   git clone https://github.com/Alishbashahid-dev/blood-donation-finder.git
    ```
 
 2. **Create a Feature Branch**
